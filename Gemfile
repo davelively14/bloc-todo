@@ -19,7 +19,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
 gem 'turbolinks'
 gem 'bootstrap-sass'
-gem 'devise', '~> 4.1.0'
+gem 'bcrypt', '~> 3.1.7'
 
 group :development, :test do
   gem 'byebug'
