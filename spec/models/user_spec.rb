@@ -6,6 +6,9 @@ RSpec.describe User, type: :model do
   let(:password) { 'password' }
   let(:user) { create(:user, username: username, email: email, password: password, password_confirmation: password) }
 
+  # Shoulda test for associations
+  it { is_expected.to have_many(:lists) }
+
   # Shoudla test for email
   it { is_expected.to validate_presence_of(:email) }
   it { is_expected.to validate_uniqueness_of(:email) }
