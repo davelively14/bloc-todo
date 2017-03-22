@@ -7,7 +7,7 @@ RSpec.describe Api::UsersController, type: :controller do
   let(:another_user) { create(:user) }
 
   context "Authorized user" do
-    before(:each) do
+    before do
       request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(username, password)
     end
 
