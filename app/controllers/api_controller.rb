@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
-  skip_before_action :verify_authentication_token
+  # skip_before_action :verify_authentication_token
+  protect_from_forgery with: :null_session
 
   private
 
