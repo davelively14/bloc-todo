@@ -15,6 +15,14 @@ RSpec.describe Api::ItemsController, type: :controller do
         expect(response.body).to eq(ItemSerializer.new(Item.last).to_json)
       end
     end
+
+    describe "DELETE destroy" do
+      it "deletes an item" do
+        item = create(:item)
+        delete :destroy, id: item.id, list_id: item.list_id
+        expect(Item.where(id: item.id)).to eq([])
+      end
+    end
   end
 
   context "Unauthorized user" do
@@ -23,6 +31,14 @@ RSpec.describe Api::ItemsController, type: :controller do
         list = create(:list)
         name = Faker::Book.title
         post :create, {list_id: list.id, item: {name: name}}
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
+
+    describe "DELETE destroy" do
+      it "denies access to unauthorized users" do
+        item = create(:item)
+        delete :destroy, id: item.id, list_id: item.list_id
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
