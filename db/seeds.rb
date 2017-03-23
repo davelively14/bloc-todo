@@ -4,7 +4,13 @@ User.create!(
   password_confirmation: "password"
 )
 
-5.times do
+User.create!(
+  username: "username",
+  password: "password",
+  password_confirmation: "password"
+)
+
+4.times do
   User.create!(
     username: Faker::GameOfThrones.character.gsub(/\W/, ""),
     password: "password",
