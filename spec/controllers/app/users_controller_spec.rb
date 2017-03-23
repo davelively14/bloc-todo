@@ -27,6 +27,22 @@ RSpec.describe Api::UsersController, type: :controller do
         expect(response.body).to eq(UserSerializer.new(User.last).to_json)
       end
     end
+
+    describe "DELETE destroy" do
+      it "deletes a user" do
+        user = create(:user)
+        delete :destroy, id: user.id
+        expect(User.where(id: user.id)).to eq([])
+      end
+
+      it "deletes associated lists" do
+        user = create(:user)
+        2.times { create(:list, user: user) }
+        expect{
+          delete :destroy, id: user.id
+        }.to change(List, :count).by(-2)
+      end
+    end
   end
 
   context "Unauthorized user" do
@@ -40,6 +56,14 @@ RSpec.describe Api::UsersController, type: :controller do
     describe "POST create" do
       it "denies access for unauthorized users" do
         post :create, user: {username: "newUser", password: "password"}
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
+
+    describe "DELETE destroy" do
+      it "denies access for unauthorized users" do
+        user = create(:user)
+        delete :destroy, id: user.id
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
