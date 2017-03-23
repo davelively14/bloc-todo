@@ -1,6 +1,5 @@
 User.create!(
   username: "dlively",
-  email: "dlively@resurgens.io",
   password: "password",
   password_confirmation: "password"
 )
@@ -8,7 +7,6 @@ User.create!(
 5.times do
   User.create!(
     username: Faker::GameOfThrones.character.gsub(/\W/, ""),
-    email: Faker::Internet.email,
     password: "password",
     password_confirmation: "password"
   )
