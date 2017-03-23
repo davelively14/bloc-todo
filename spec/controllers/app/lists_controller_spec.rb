@@ -42,5 +42,13 @@ RSpec.describe Api::ListsController, type: :controller do
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
+
+    describe "DELETE destroy" do
+      it "denies access to unauthorized users" do
+        list = create(:list)
+        delete :destroy, id: list.id, user_id: list.user_id
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
   end
 end
