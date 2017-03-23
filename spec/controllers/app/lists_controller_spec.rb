@@ -15,6 +15,22 @@ RSpec.describe Api::ListsController, type: :controller do
         expect(response.body).to eq(ListSerializer.new(List.last).to_json)
       end
     end
+
+    describe "DELETE destroy" do
+      it "deletes a list" do
+        list = create(:list)
+        delete :destroy, id: list.id, user_id: list.user_id
+        expect(List.where(id: list.id)).to eq([])
+      end
+
+      it "deletes associated items" do
+        list = create(:list)
+        2.times { create(:item, list: list) }
+        expect{
+          delete :destroy, id: list.id, user_id: list.user_id
+        }.to change(Item, :count).by(-2)
+      end
+    end
   end
 
   context "Unauthorized user" do
