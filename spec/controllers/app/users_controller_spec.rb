@@ -1,11 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Api::UsersController, type: :controller do
-  let(:username) { 'test' }
-  let(:password) { 'password' }
-  let(:user) { create(:user, username: username, password: password, password_confirmation: password) }
-  let(:another_user) { create(:user) }
-
   context "Authorized user" do
     before do
       create(:user, username: "auth_user", password: "password", password_confirmation: "password")
@@ -14,6 +9,10 @@ RSpec.describe Api::UsersController, type: :controller do
 
     describe "GET index" do
       it "returns all users" do
+        5.times do
+          create(:user)
+        end
+
         @expected = []
         User.all.each {|u| @expected << UserSerializer.new(u)}
 
@@ -32,7 +31,7 @@ RSpec.describe Api::UsersController, type: :controller do
 
   context "Unauthorized user" do
     describe "GET index" do
-      it "does not return data for unauthorized users" do
+      it "denies access for unauthorized users" do
         get :index
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
