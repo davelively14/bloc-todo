@@ -43,6 +43,7 @@ RSpec.describe Api::ListsController, type: :controller do
         new_list = List.find(list.id)
 
         expect(new_list.name).to eq(new_name)
+        expect(new_list.pub?).to be_truthy
       end
 
       it "returns error with wrong permissions" do
