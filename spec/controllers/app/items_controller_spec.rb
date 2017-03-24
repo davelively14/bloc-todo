@@ -23,6 +23,21 @@ RSpec.describe Api::ItemsController, type: :controller do
         expect(Item.where(id: item.id)).to eq([])
       end
     end
+
+    describe "PUT update" do
+      it "updates existing item" do
+        list = create(:list)
+        item = create(:item, list: list, name: "Old name", complete: false)
+        new_name = "New name"
+        new_complete = true
+
+        put :update, id: item.id, list_id: list.id, item: {name: new_name, complete: new_complete}
+        new_item = Item.find(item.id)
+
+        expect(new_item.name).to eq(new_name)
+        expect(new_item.complete).to eq(new_complete)
+      end
+    end
   end
 
   context "Unauthorized user" do
@@ -39,6 +54,18 @@ RSpec.describe Api::ItemsController, type: :controller do
       it "denies access to unauthorized users" do
         item = create(:item)
         delete :destroy, id: item.id, list_id: item.list_id
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
+
+    describe "PUT update" do
+      it "deines access to unauthorized users" do
+        list = create(:list)
+        item = create(:item, list: list, name: "Old name", complete: false)
+        new_name = "New name"
+        new_complete = true
+
+        put :update, id: item.id, list_id: list.id, item: {name: new_name, complete: new_complete}
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
