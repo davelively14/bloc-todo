@@ -23,7 +23,8 @@ users = User.all
 25.times do
   List.create!(
     user: users.sample,
-    name: Faker::Book.title
+    name: Faker::Book.title,
+    permissions: [:priv, :pub].sample
   )
 end
 
