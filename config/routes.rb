@@ -2,8 +2,8 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   namespace :api, defaults: { format: :json } do
-    resources :users do
-      resources :lists
+    resources :users, only: [:index, :create, :destroy] do
+      resources :lists, only: [:create, :destroy, :update]
     end
 
     resources :lists, only: [] do
