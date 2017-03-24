@@ -31,6 +31,31 @@ RSpec.describe Api::ListsController, type: :controller do
         }.to change(Item, :count).by(-2)
       end
     end
+
+    describe "PUT update" do
+      it "updates existing list" do
+        user = create(:user)
+        list = create(:list, user: user, name: "Old name", permissions: :priv)
+        new_name = "New name"
+        new_permissions = :pub
+
+        put :update, id: list.id, user_id: user.id, list: {name: new_name, permissions: new_permissions}
+        new_list = List.find(list.id)
+
+        expect(new_list.name).to eq(new_name)
+      end
+
+      it "returns error with wrong permissions" do
+        user = create(:user)
+        list = create(:list, user: user, name: "Old name", permissions: :priv)
+        new_name = "New name"
+        new_permissions = :not_supported
+
+        expect{
+          put :update, id: list.id, user_id: user.id, list: {name: new_name, permissions: new_permissions}
+        }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   context "Unauthorized user" do
@@ -47,6 +72,18 @@ RSpec.describe Api::ListsController, type: :controller do
       it "denies access to unauthorized users" do
         list = create(:list)
         delete :destroy, id: list.id, user_id: list.user_id
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
+
+    describe "PUT update" do
+      it "denies access to unauthorized user" do
+        user = create(:user)
+        list = create(:list, user: user, name: "Old name", permissions: :priv)
+        new_name = "New name"
+        new_permissions = :pub
+
+        put :update, id: list.id, user_id: user.id, list: {name: new_name, permissions: new_permissions}
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
