@@ -46,7 +46,7 @@ RSpec.describe Api::ListsController, type: :controller do
         expect(new_list.pub?).to be_truthy
       end
 
-      it "returns error with wrong permissions" do
+      it "returns error with wrong invalid paramter" do
         user = create(:user)
         list = create(:list, user: user, name: "Old name", permissions: :priv)
         new_name = "New name"
