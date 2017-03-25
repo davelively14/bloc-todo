@@ -1,6 +1,13 @@
 class Api::ListsController < ApiController
   before_action :authenticated?
 
+  def index
+    user = User.find(params[:user_id])
+    lists = List.where(user_id: user.id)
+
+    render json: lists, each_serializer: ListSerializer
+  end
+
   def create
     list = List.new(list_params)
     list.user_id = params[:user_id]
