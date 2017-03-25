@@ -64,6 +64,29 @@ RSpec.describe Api::ItemsController, type: :controller do
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
+
+    describe "GET index" do
+      it "returns items for a list owend by current user" do
+        5.times { create(:item, list_id: @list.id) }
+
+        @expected = []
+        Item.all.each {|i| @expected << ItemSerializer.new(i)}
+
+        get :index, list_id: @list.id
+        expect(response.body).to eq(@expected.to_json)
+      end
+
+      it "returns items for a list owned by another user" do
+        list = create(:list)
+        5.times { create(:item, list_id: list.id) }
+
+        @expected = []
+        Item.all.each {|i| @expected << ItemSerializer.new(i)}
+
+        get :index, list_id: list.id
+        expect(response.body).to eq(@expected.to_json)
+      end
+    end
   end
 
   context "Unauthorized user" do
@@ -85,12 +108,25 @@ RSpec.describe Api::ItemsController, type: :controller do
     end
 
     describe "PUT update" do
-      it "deines access to unauthorized users" do
+      it "denies access to unauthorized users" do
         item = create(:item, name: "Old name", complete: false)
         new_name = "New name"
         new_complete = true
 
         put :update, id: item.id, item: {name: new_name, complete: new_complete}
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
+
+    describe "GET index" do
+      it "denies access to unauthorized users" do
+        list = create(:list)
+        5.times { create(:item, list_id: list.id) }
+
+        @expected = []
+        Item.all.each {|i| @expected << ItemSerializer.new(i)}
+
+        get :index, list_id: list.id
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
