@@ -6,4 +6,8 @@ class List < ActiveRecord::Base
 
   validates :name, presence: true, length: { maximum: 100 }
   validates :user_id, presence: true
+
+  def get_user
+    self.user
+  end
 end
