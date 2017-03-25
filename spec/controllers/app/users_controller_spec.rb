@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::UsersController, type: :controller do
   context "Authorized user" do
     before do
-      create(:user, username: "auth_user", password: "password", password_confirmation: "password")
+      @user = create(:user, username: "auth_user", password: "password", password_confirmation: "password")
       request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials("auth_user", "password")
     end
 
@@ -30,17 +30,21 @@ RSpec.describe Api::UsersController, type: :controller do
 
     describe "DELETE destroy" do
       it "deletes a user" do
-        user = create(:user)
-        delete :destroy, id: user.id
-        expect(User.where(id: user.id)).to eq([])
+        delete :destroy, id: @user.id
+        expect(User.where(id: @user.id)).to eq([])
       end
 
       it "deletes associated lists" do
-        user = create(:user)
-        2.times { create(:list, user: user) }
+        2.times { create(:list, user: @user) }
         expect{
-          delete :destroy, id: user.id
+          delete :destroy, id: @user.id
         }.to change(List, :count).by(-2)
+      end
+
+      it "cannot delete another user" do
+        new_user = create(:user)
+        delete :destroy, id: new_user.id
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
   end

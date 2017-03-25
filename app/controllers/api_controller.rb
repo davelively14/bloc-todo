@@ -21,7 +21,9 @@ class ApiController < ApplicationController
         user = request.post? ? User.find(request.params["user_id"]) : User.find(request.params["user_id"])
         return current_user == user
       when "api/users"
-        puts "users"
+        return true if request.post?
+        user = User.find(request.params["id"])
+        return current_user == user
       else
         puts "This api is not "
         false
