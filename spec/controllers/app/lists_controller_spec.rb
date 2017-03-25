@@ -132,5 +132,18 @@ RSpec.describe Api::ListsController, type: :controller do
         expect(response.body).to eq("HTTP Basic: Access denied.\n")
       end
     end
+
+    describe "GET index" do
+      it "denies access to unauthorized user" do
+        user = create(:user)
+        5.times { create(:list, user_id: user.id) }
+
+        @expected = []
+        List.all.each {|u| @expected << ListSerializer.new(u)}
+
+        get :index, user_id: user.id
+        expect(response.body).to eq("HTTP Basic: Access denied.\n")
+      end
+    end
   end
 end
